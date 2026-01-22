@@ -32,6 +32,23 @@
         .logout-btn:hover {
             background: #c82333;
         }
+        .product-image {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 
@@ -45,17 +62,19 @@
     </div>
 
     <h2>Add Product</h2>
-    <form action="/add" method="post">
-        Name: <input name="name"><br>
-        Price: <input name="price"><br>
-        Quantity: <input name="quantity"><br>
+    <form action="/add" method="post" enctype="multipart/form-data">
+        Name: <input name="name" required><br><br>
+        Price: <input name="price" type="number" step="0.01" required><br><br>
+        Quantity: <input name="quantity" type="number" required><br><br>
+        Image: <input name="image" type="file" accept="image/*"><br><br>
         <button>Add</button>
     </form>
 
     <h2>Products</h2>
-    <table border="1">
+    <table>
         <tr>
             <th>ID</th>
+            <th>Image</th>
             <th>Name</th>
             <th>Price</th>
             <th>Quantity</th>
@@ -65,11 +84,18 @@
         <% products.forEach(p => { %>
         <tr>
             <td><%= p.id %></td>
+            <td>
+                <% if (p.imageUrl) { %>
+                    <img src="<%= p.imageUrl %>" alt="<%= p.name %>" class="product-image">
+                <% } else { %>
+                    No image
+                <% } %>
+            </td>
             <td><%= p.name %></td>
             <td><%= p.price %></td>
             <td><%= p.quantity %></td>
             <td>
-                <a href="/edit/<%= p.id %>">Edit</a>
+                <a href="/edit/<%= p.id %>">Edit</a> |
                 <a href="/delete/<%= p.id %>" onclick="return confirm('Delete this product?')">Delete</a>
             </td>
         </tr>

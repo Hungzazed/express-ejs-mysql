@@ -1,11 +1,13 @@
 const express = require('express');
 const session = require('express-session');
+const path = require('path');
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Session middleware
 app.use(session({
@@ -20,6 +22,7 @@ const productRoutes = require('./routes/product.routes');
 app.use('/auth', authRoutes);
 app.use('/', productRoutes);
 
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
