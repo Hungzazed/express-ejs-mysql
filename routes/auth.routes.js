@@ -1,36 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const authController = require('../controllers/auth.controller');
+const { redirectIfAuthenticated, requireAdmin } = require('../middlewares/auth.middleware');
 
-// Show login page
-router.get('/login', (req, res) => {
-  if (req.session.userId) {
-    return res.redirect('/');
-  }
-  res.render('login', { error: null });
-});
+// Trang đăng nhập
+router.get('/login', redirectIfAuthenticated, authController.showLoginPage);
+router.post('/login', redirectIfAuthenticated, authController.login);
 
-// Handle login
-router.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  
-  // Simple authentication (username: admin, password: admin)
-  if (username === 'admin' && password === 'admin') {
-    req.session.userId = 1;
-    req.session.username = username;
-    res.redirect('/');
-  } else {
-    res.render('login', { error: 'Sai tên đăng nhập hoặc mật khẩu!' });
-  }
-});
+// Trang đăng ký (chỉ admin)
+router.get('/register', requireAdmin, authController.showRegisterPage);
+router.post('/register', requireAdmin, authController.register);
 
-// Handle logout
-router.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.log(err);
-    }
-    res.redirect('/auth/login');
-  });
-});
+// Đăng xuất
+router.get('/logout', authController.logout);
 
 module.exports = router;
+
